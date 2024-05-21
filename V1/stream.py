@@ -10,10 +10,10 @@ def coordinate(x, y, z, w, p, r):
 
 robot = Robot(
     robot_model = "Fanuc",
-    host="",
-    port=,
-    ee_DO_type="",
-    ee_DO_num=,
+    host="192.168.0.3",
+    port=18735,
+    ee_DO_type="RDO",
+    ee_DO_num=7,
 )
 
 robot.connect()
