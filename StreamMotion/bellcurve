@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameters for the bell curve
+mean = 180       # Center of the range [0, 360]
+std_dev = 60     # Standard deviation to spread the values
+num_points = 2000  # Numbers of points in the array
+desired_sum = 8000
+desired_area = 360
+
+# Generate the bell curve data with a normal distribution
+bell_curve = np.random.normal(loc=mean, scale=std_dev, size=num_points)
+
+# Normalize the bell curve to have an integral of 1
+bell_curve -= np.min(bell_curve)  # Shift to positive values
+bell_curve /= np.sum(bell_curve)  # Normalize to make the sum equal to 1
+
+# Scale the bell curve to have the desired sum and area
+bell_curve *= desired_sum / np.sum(bell_curve)  # Ensure the sum equals 8000
+scaling_factor = desired_area / np.trapz(bell_curve, dx=1)
+bell_curve *= scaling_factor  # Scale to ensure the area under the curve equals 360
+
+# Plot the bell curve
+plt.hist(bell_curve, bins=50, density=False, alpha=0.6, color='g')
+
+# Plot the scaled probability density function (PDF) of the normal distribution
+xmin, xmax = 0, 360
+x = np.linspace(xmin, xmax, 100)
+p = scaling_factor * np.exp(-((x - mean)**2) / (2 * std_dev**2)) / (np.sqrt(2 * np.pi) * std_dev)
+plt.plot(x, p, 'k', linewidth=2)
+title = "Scaled Bell Curve with Sum 8000 and Integral 360"
+plt.title(title)
+plt.xlabel('Value')
+plt.ylabel('Frequency')
+plt.grid(True)
+plt.show()
+
+# Check the sum and area under the curve
+print("Sum of bell_curve:", np.sum(bell_curve))
+print("Area under the curve:", np.trapz(bell_curve, dx=1))

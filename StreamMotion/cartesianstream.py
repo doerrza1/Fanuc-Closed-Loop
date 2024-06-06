@@ -52,7 +52,7 @@ for i, value in enumerate(signal):
   
   print('Received Seq No:', resp[2])
   
-  current_jnt_data = resp[9:15]
+  current_car_data = resp[9:15]
 
 client.send_end_pack()
 print("End of stream")
