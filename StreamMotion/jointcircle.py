@@ -8,8 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plot
 
 # signal definition for j1  (0 -> 45 -> 0 -> -45 -> 0)
-t_max = 1000 
-# step = 45/t_max
 
     #using linspace creates an array of numbers evenly spaced between start and stop
     #causes the robot to accelerate (start = 0, stop = 45) or decelerate(start = 45, stop = 0)
