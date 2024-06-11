@@ -2,8 +2,8 @@
 
 import socket
 import time
-from robot.StreamMotion.src.utils import *
-from robot.StreamMotion.src.client import *
+from src.utils import *
+from src.client import *
 import numpy as np
 import math
 

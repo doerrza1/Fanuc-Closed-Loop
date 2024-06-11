@@ -13,19 +13,30 @@ import matplotlib.pyplot as plot
     #causes the robot to accelerate (start = 0, stop = 45) or decelerate(start = 45, stop = 0)
     #by incrementing by a higher (acc) or lower (dec)
 
-    #positive increment from center to end
+#positive increment from center to end
 jnt_motion1_acc = np.linspace(start = 0, stop = 1, num = 1000)
 jnt_motion1_acc = jnt_motion1_acc * (22.5/sum(jnt_motion1_acc))
 
 jnt_motion1_dec = np.linspace(start = 1, stop = 0, num = 1000)
 jnt_motion1_dec = jnt_motion1_dec * (22.5/sum(jnt_motion1_dec))
-    #negative increment from end to end
-jnt_motion2_acc = np.linspace(start = 0, stop = 1, num = 2000)
-jnt_motion2_acc = jnt_motion2_acc * (45/sum(jnt_motion2_acc))
 
-jnt_motion2_dec = np.linspace(start = 1, stop = 0, num = 2000)
-jnt_motion2_dec = jnt_motion2_dec * (45/sum(jnt_motion2_dec))
-    #postive increment from end to center
+#negative increment from end to end
+jnt_motion2_acc = np.linspace(start = 0, stop = 1, num = 1500)
+jnt_motion2_acc = jnt_motion2_acc * (22.5/sum(jnt_motion2_acc))
+print("acc: ", sum(jnt_motion2_acc))
+
+jnt_motion2_ss = np.full(1000, 1)   # create an array of 1000 1's
+ss = jnt_motion2_acc[-1]
+jnt_motion2_ss = jnt_motion2_ss*ss # scales the motion to the last value of acceleration
+print(ss)
+print("ss: ", sum(jnt_motion2_ss))
+print(jnt_motion2_ss[0])
+
+jnt_motion2_dec = np.linspace(start = 1, stop = 0, num = 1500)
+jnt_motion2_dec = jnt_motion2_dec * (22.5/sum(jnt_motion2_dec))
+print("dec : ", sum(jnt_motion2_dec))
+
+#postive increment from end to center
 jnt_motion3_acc = jnt_motion1_acc
 
 jnt_motion3_dec = jnt_motion1_dec
@@ -37,7 +48,9 @@ jnt_motion3 = np.append(jnt_motion3_acc, jnt_motion3_dec)
 signal_1 = np.append(jnt_motion1, jnt_motion2)
 signal_1 = np.append(signal_1, jnt_motion3)
 
+print("signal_1:", sum(signal_1))
 signal_1 *= 7.5         #scaling factor
+print("signal_1 scaled: ", sum(signal_1))
 
 #signal definition for j3
 #positive increment from bottom to  top
