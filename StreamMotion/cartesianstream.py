@@ -2,9 +2,9 @@
 
 import socket
 import time
-from robot.StreamMotion.src.utils import *
-from robot.StreamMotion.src.client import *
+from src.client import *
 import numpy as np
+
 
 # signal definition
 t_max = 2000 
@@ -37,7 +37,15 @@ for i, value in enumerate(signal):
     data = commandpack([resp[2], 0, 0, car_data])
     print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in car_data])
     print('Sent Seq No:', [resp[2],0,1])
-  
+    
+    if (i % 250 == 0):
+      limit = client.send_vel_pack(3)
+      print(limit)
+      limit = client.send_acc_pack(3)
+      print(limit)
+      limit = client.send_jerk_pack(3)
+      print(limit)
+
   else:
     data = commandpack([resp[2], 1, 0, car_data])
     print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in car_data])
