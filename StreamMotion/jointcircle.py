@@ -21,18 +21,11 @@ jnt_motion1_dec = np.linspace(start = 1, stop = 0, num = 1000)
 jnt_motion1_dec = jnt_motion1_dec * (22.5/sum(jnt_motion1_dec))
 
 #negative increment from end to end
-jnt_motion2_acc = np.linspace(start = 0, stop = 1, num = 1500)
+jnt_motion2_acc = np.linspace(start = 0, stop = 1, num = 2000)
 jnt_motion2_acc = jnt_motion2_acc * (22.5/sum(jnt_motion2_acc))
 print("acc: ", sum(jnt_motion2_acc))
 
-jnt_motion2_ss = np.full(1000, 1)   # create an array of 1000 1's
-ss = jnt_motion2_acc[-1]
-jnt_motion2_ss = jnt_motion2_ss*ss # scales the motion to the last value of acceleration
-print(ss)
-print("ss: ", sum(jnt_motion2_ss))
-print(jnt_motion2_ss[0])
-
-jnt_motion2_dec = np.linspace(start = 1, stop = 0, num = 1500)
+jnt_motion2_dec = np.linspace(start = 1, stop = 0, num = 2000)
 jnt_motion2_dec = jnt_motion2_dec * (22.5/sum(jnt_motion2_dec))
 print("dec : ", sum(jnt_motion2_dec))
 
