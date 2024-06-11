@@ -23,11 +23,11 @@ jnt_motion1_dec = jnt_motion1_dec * (22.5/sum(jnt_motion1_dec))
 
 #negative increment from end to end
 jnt_motion2_acc = np.linspace(start = 0, stop = 1, num = 2000)
-jnt_motion2_acc = jnt_motion2_acc * (22.5/sum(jnt_motion2_acc))
+jnt_motion2_acc = jnt_motion2_acc * (45/sum(jnt_motion2_acc))
 print("acc: ", sum(jnt_motion2_acc))
 
 jnt_motion2_dec = np.linspace(start = 1, stop = 0, num = 2000)
-jnt_motion2_dec = jnt_motion2_dec * (22.5/sum(jnt_motion2_dec))
+jnt_motion2_dec = jnt_motion2_dec * (45/sum(jnt_motion2_dec))
 print("dec : ", sum(jnt_motion2_dec))
 
 #postive increment from end to center
@@ -91,8 +91,8 @@ for i, value in enumerate(zip(signal_1, signal_3)):
     jnt_data[2] += value[1] #increments joint 3 by value in signal_3
 
     data = commandpack([resp[2], 0, 1, jnt_data])
-    print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
-    print('Sent Seq No:', [resp[2],0,1])
+    #print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
+    #print('Sent Seq No:', [resp[2],0,1])
 
   elif ((i > 2000) and (i <= 4000)):
     jnt_data[0] -= value[0] #increments joint 1 by value in signal_1
@@ -134,9 +134,6 @@ for i, value in enumerate(zip(signal_1, signal_3)):
     display_limit_pack(limit)
 
     display_jnt_pack(resp)
-  # print('({:.2f}ms)'.format(1000*(time.time()-start_time)))
-  
-#resp = explainRobData(resp) already called within the send command pack function
   
   # print('Received Seq No:', resp[2])
   
