@@ -31,3 +31,18 @@ def display_limit_pack(data):
     print("Check Time (sec): ", data[5])
     print("Allowable limit: ", data[6])
     print("----------------------------")
+
+def display_jnt_pack(data):
+    print("Packet Type: ", data[0])
+    print("Version Number: ", data[1])
+    print("Sequence Number: ", data[2])
+    print("Joint 1 (deg): ", data[18])
+    print("Joint 2 (deg): ", data[19])
+    print("Joint 3 (deg): ", data[20])
+    print("Joint 4 (deg): ", data[21])
+    print("Joint 5 (deg): ", data[22])
+    print("Joint 6 (deg): ", data[23])
+    print("Joint 7 (deg): ", data[24])
+    print("Joint 8 (deg): ", data[25])
+    print("Joint 9 (deg): ", data[26])
+    print("----------------------------")
