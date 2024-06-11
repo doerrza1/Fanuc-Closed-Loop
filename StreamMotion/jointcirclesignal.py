@@ -4,6 +4,7 @@ import numpy as np
 from src.plot import *
 import matplotlib
 
+
 matplotlib.use('TkAgg')
 # signal definition for j1  (0 -> 45 -> 0 -> -45 -> 0)
 
