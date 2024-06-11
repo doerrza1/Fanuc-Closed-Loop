@@ -42,7 +42,7 @@ signal_1 = np.append(jnt_motion1, jnt_motion2)
 signal_1 = np.append(signal_1, jnt_motion3)
 
 print("signal_1:", sum(signal_1))
-signal_1 *= 7.5         #scaling factor
+signal_1 *= 5         #scaling factor
 print("signal_1 scaled: ", sum(signal_1))
 
 #signal definition for j3
@@ -61,7 +61,7 @@ jnt_down = np.append(jnt_down_acc, jnt_down_dec)
 
 signal_3 = np.append(jnt_up, jnt_down)
 
-signal_3 *= 7.5
+signal_3 *= 5
 
 # UDP initialization
 client = UDPClient("192.168.0.3")
