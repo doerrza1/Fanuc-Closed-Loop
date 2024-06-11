@@ -2,10 +2,11 @@
 
 import socket
 import time
-from src.utils import *
 from src.client import *
+from src.display import *
 import numpy as np
 import matplotlib.pyplot as plot
+
 
 # signal definition for j1  (0 -> 45 -> 0 -> -45 -> 0)
 
@@ -98,38 +99,46 @@ for i, value in enumerate(zip(signal_1, signal_3)):
     jnt_data[2] += value[1] #increments joint 3 by value in signal_3
     
     data = commandpack([resp[2], 0, 1, jnt_data])
-    print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
-    print('Sent Seq No:', [resp[2],0,1])
+    # print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
+    # print('Sent Seq No:', [resp[2],0,1])
   
   elif ((i > 4000) and (i <= 6000)):
     jnt_data[0] -= value[0] #increments joint 1 by value in signal_1
     jnt_data[2] -= value[1] #increments joint 3 by value in signal_3
     
     data = commandpack([resp[2], 0, 1, jnt_data])
-    print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
-    print('Sent Seq No:', [resp[2],0,1])
+    # print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
+    # print('Sent Seq No:', [resp[2],0,1])
   
   elif ((i > 6000) and (i < 8000)):
     jnt_data[0] += value[0] #increments joint 1 by value in signal_1
     jnt_data[2] -= value[1] #increments joint 3 by value in signal_3
     
     data = commandpack([resp[2], 0, 1, jnt_data])
-    print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
-    print('Sent Seq No:', [resp[2],0,1])
+    # print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
+    # print('Sent Seq No:', [resp[2],0,1])
 
   else:
     data = commandpack([resp[2], 1, 1, jnt_data])
-    print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
-    print('Sent Seq No:', [resp[2], 1, 1])
+    # print('COMMAND PACK SENT:', ['%.4f' % jnt for jnt in jnt_data])
+    # print('Sent Seq No:', [resp[2], 1, 1])
 
 # Sends command pack and recieves status packet   
   resp = client.send_command_pack(data)
-  
+  if (i % 500 == 0):
+    limit = client.send_vel_pack(1)
+    display_limit_pack(limit)
+    limit = client.send_acc_pack(1)
+    display_limit_pack(limit)
+    limit = client.send_jerk_pack(1)
+    display_limit_pack(limit)
+
+    display_jnt_pack(resp)
   # print('({:.2f}ms)'.format(1000*(time.time()-start_time)))
   
 #resp = explainRobData(resp) already called within the send command pack function
   
-  print('Received Seq No:', resp[2])
+  # print('Received Seq No:', resp[2])
   
   current_jnt_data = resp[18:27]
 
