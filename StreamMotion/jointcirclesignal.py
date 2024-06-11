@@ -3,7 +3,9 @@ import time
 from src.utils import *
 from src.client import *
 import numpy as np
-import matplotlib.pyplot as plot
+from src.plot import *
+import matplotlib
+
 
 # signal definition for j1  (0 -> 45 -> 0 -> -45 -> 0)
 
