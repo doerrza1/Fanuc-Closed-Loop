@@ -2,8 +2,8 @@
 
 import socket
 import time
-from robot.StreamMotion.src.utils import *
-from robot.StreamMotion.src.client import *
+from src.utils import *
+from src.client import *
 import numpy as np
 import matplotlib.pyplot as plot
 
@@ -55,10 +55,10 @@ print("signal_1 scaled: ", sum(signal_1))
 #signal definition for j3
 #positive increment from bottom to  top
 jnt_up_acc = np.linspace(start = 0, stop = 1, num = 2000) #0 -> 90
-jnt_up_acc = jnt_up_acc * (45/sum(jnt_up_acc))
+jnt_up_acc = jnt_up_acc * (22.5/sum(jnt_up_acc))
 
 jnt_up_dec = np.linspace(start = 1, stop = 0, num = 2000)  #90-> 180
-jnt_up_dec = jnt_up_dec * (45/sum(jnt_up_dec))
+jnt_up_dec = jnt_up_dec * (22.5/sum(jnt_up_dec))
     #negative increment from top to bottom
 jnt_down_acc = jnt_up_acc     #180 -> 270 
 jnt_down_dec = jnt_up_dec     #270 -> 360
