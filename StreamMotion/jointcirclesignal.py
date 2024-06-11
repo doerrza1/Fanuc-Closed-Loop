@@ -29,6 +29,11 @@ print("last_value: ", jnt_motion2_acc[-1])
 steadystate = jnt_motion2_acc[-1]
 jnt_motion2_ss = np.full(2000, 1)  # fils array with 2000 1's
 
+for i, value in enumerate(jnt_motion2_ss):
+    if (i % 2 == 1):
+        jnt_motion2_ss[i] = 0
+
+
 # scales steady state motion to the same as final accleration value
 jnt_motion2_ss = jnt_motion2_ss*(steadystate)
 print("steadystate step: ", jnt_motion2_ss[0])
