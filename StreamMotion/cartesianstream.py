@@ -4,6 +4,7 @@ import socket
 import time
 from src.client import *
 import numpy as np
+from src.display import *
 
 
 # signal definition
@@ -39,12 +40,15 @@ for i, value in enumerate(signal):
     print('Sent Seq No:', [resp[2],0,1])
     
     if (i % 250 == 0):
+      print("Velocity:")
       limit = client.send_vel_pack(3)
-      print(limit)
+      display_limit_pack(limit)
+      print("Acceleration:")
       limit = client.send_acc_pack(3)
-      print(limit)
+      display_limit_pack(limit)
+      print("Jerk:")
       limit = client.send_jerk_pack(3)
-      print(limit)
+      display_limit_pack(limit)
 
   else:
     data = commandpack([resp[2], 1, 0, car_data])
