@@ -31,14 +31,14 @@ def radius(joint, data = [0, 350, 300]):
 
     elif(joint == 4):
         # Rotation about J4 will have a radius equal to the length of the eoat
-        r = 0
+        r = 203
 
     elif(joint == 5):
         # Rotation about J5 will have a radius equal to the length of the eoat
-        r = 0
+        r = 203
     elif(joint == 6):
         # Rotation about J6 will have a radius equal to the length of the eoat
-        r = 0
+        r = 25
     else:
         r = 0
 
