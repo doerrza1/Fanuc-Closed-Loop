@@ -7,6 +7,9 @@ from src.display import *
 from src.radius import *
 import numpy as np
 
+# When moving multiple joints at one time use a lower value than you think in order to prevent 
+# the jerk limit from being reached
+
 # Velocity input will be in deg/s, converted to deg/8ms (for signal definition)
 
 # Will also convert the deg/s into mm/s using a calculated radius for the motion to 
@@ -16,6 +19,7 @@ import numpy as np
 velocity = 1
 while(velocity == True):
     velocity = int(input("Input a value for Max Velocity in deg/s: "))
+    # selects joint for movement, joint-1 is the index for the joint within jnt_data 
     joint = int(input("Input a joint(1-6) for rotation: "))
 
     # Gets radius of the joint based on the initial position of the arm
