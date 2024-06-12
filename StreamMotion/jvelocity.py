@@ -69,13 +69,13 @@ for i, value in enumerate(signal):
 
     elif(i <= 500):
     	# Creates forward movement packs
-        jnt_data[joint] += value
+        jnt_data[joint-1] += value
         
         data = commandpack([resp[2], 0, 1, jnt_data])
     		
     elif((i > 500) and (i < 1000)):
     	# Creates reverse movement packs
-        jnt_data[joint] += value
+        jnt_data[joint-1] -= value
     	
         data = commandpack([resp[2], 0, 1, jnt_data])
 
@@ -95,7 +95,7 @@ for i, value in enumerate(signal):
 
         limit = client.send_acc_pack(joint)
         display_limit_pack(limit)
-        
+
         limit = client.send_jerk_pack(joint)
         display_limit_pack(limit)
 
