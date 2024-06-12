@@ -69,3 +69,4 @@ jnt_down = np.append(jnt_down_acc, jnt_down_dec)
 signal_3 = np.append(jnt_up, jnt_down)
 
 signal_3 *= 7.5
+
