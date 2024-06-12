@@ -13,15 +13,20 @@ def radius(joint, data = [0, 350, 300]):
 
     if (joint == 1):
         # Rotation about J1 will have a radius equal to the y-distance
+        # About 41 deg/s will reach max threshold
+
         r = y
 
     elif(joint == 2):
         # Rotation about J2 will have a radius equal to the hypotenuse of y and z
+        # About 31 deg/s will reach max threshold 
+
         sum_sq = y**2 + z**2  # c^2 = a^2 + b^2
         r = math.sqrt(sum_sq) # c = sqrt(a^2 + b^2)
 
     elif(joint == 3):
         # Rotation about J3 will have a radius equal to the y- distance
+        # About 41 deg/s will reach max threshold
         r = y
 
     elif(joint == 4):

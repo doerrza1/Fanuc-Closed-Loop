@@ -54,8 +54,6 @@ current_data = resp[9:18]
 for i, value in enumerate(signal):
 
     car_data = current_data
-    #increment the position by the velocity in the signal
-    
 
     if (i == 0):
         # Creates initial command pack
