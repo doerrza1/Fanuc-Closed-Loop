@@ -43,7 +43,7 @@ v_ms = velocity*8/1000
 
 #signal definition
 acceleration = np.linspace(start = 0, stop = v_ms, num = 200)
-
+print("acc: ", acceleration[1])
 steady_state = np.full(100, v_ms)
 
 deceleration = np.linspace(start = v_ms, stop = 0, num = 200)
