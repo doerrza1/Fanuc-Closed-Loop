@@ -55,7 +55,7 @@ print(len(signal))
 
 # Obtain the length of the signals
 max_len = len(max(signal, key = len))
-
+print("Number of signals to be sent: ", max_len)
 
 # Establish Connection
 client = UDPClient("192.168.0.3")
