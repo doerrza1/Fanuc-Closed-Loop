@@ -8,10 +8,12 @@ from src.signal import *
 import numpy as np
 
 
-print("Stream Motion Master Control")
+print("Stream Motion Master Control now with loops!!!")
 print("Do not exceed 75mm/s or 20 deg/s for test purposes")
 print("Do not exceed 4 seconds for time")
 print("----------------------------")
+
+loops = int(input("How many loops: "))
 # Selection for method of movement (C - Cartesian, J - Joint)
 while(True):
     movement = input("Select a method of movement (C or J): ").strip().upper()
@@ -65,50 +67,55 @@ resp = client.send_init_pack()
 
 current_rob_data = resp[low_bound:high_bound]
 
+# Create/send initial command pack
+data = commandpack([1, 0, m, current_rob_data])
+resp = client.send_command_pack(data)
+current_rob_data = resp[low_bound:high_bound]
+
+# Variable Declarations
+cnt = 0
+i = 0
+
 # Cartesian Movement
 if (m == 0):
     
-    for i in range(max_len):
+    while(i < cnt):
 
         rob_data = current_rob_data
 
-        if (i == 0):
-            # Creates initial command pack
-            data = commandpack([1, 0, m, rob_data])
-
-        elif(i < max_len-2):
+        if(i < max_len-1):
             # Creates forward movement packs
             rob_data[0] += signal[0][i]  #X
             rob_data[1] += signal[1][i]  #Y
             rob_data[2] += signal[2][i]  #Z
             
             data = commandpack([resp[2], 0, m, rob_data])
+            i += 1
+        
+        elif(i == max_len-1):
+            rob_data[0] += signal[0][i]  #X
+            rob_data[1] += signal[1][i]  #Y
+            rob_data[2] += signal[2][i]  #Z
+            
+            data = commandpack([resp[2], 0, m, rob_data])
 
-        else:
-            # Creates final command pack
-            data = commandpack([resp[2], 1, m, rob_data])
+            i = 0
+            cnt += 1 
+            signal = signal * (-1)
+            print(f"Loop Done {cnt}") 
 
         # Sends command pack and receives new data
         resp = client.send_command_pack(data)
-
-        # print out data for every 50 sent
-        if (i % 50 == 0):
-            display_cmd_pack(resp)
-
-        current_rob_data = resp[low_bound:high_bound]
+        current_data = resp[low_bound:high_bound]
 
 # Joint Motion
 elif (m == 1):
     
-    for i in range(max_len):
+    while(i < cnt):
 
         rob_data = current_rob_data
 
-        if (i == 0):
-            # Creates initial command pack
-            data = commandpack([1, 0, m, rob_data])
-
-        elif(i < max_len-2):
+        if(i < max_len-1):
             # Creates forward movement packs
             rob_data[0] += signal[0][i]  #J1
             rob_data[1] += signal[1][i]  #J2
@@ -118,20 +125,31 @@ elif (m == 1):
             rob_data[5] += signal[5][i]  #J6
 
             data = commandpack([resp[2], 0, m, rob_data])
+            i += 1
 
-        else:
-            # Creates final command pack
-            data = commandpack([resp[2], 1, m, rob_data])
+        elif(i == max_len-1):
+            # Creates forward movement packs
+            rob_data[0] += signal[0][i]  #J1
+            rob_data[1] += signal[1][i]  #J2
+            rob_data[2] += signal[2][i]  #J3
+            rob_data[3] += signal[3][i]  #J4
+            rob_data[4] += signal[4][i]  #J5
+            rob_data[5] += signal[5][i]  #J6
 
+            data = commandpack([resp[2], 0, m, rob_data])
+            i = 0
+            cnt += 1
+            signal = signal * (-1)
+            print(f"Loop Done {cnt}") 
+
+            
         # Sends command pack and receives new data
         resp = client.send_command_pack(data)
+        current_data = resp[low_bound:high_bound]
 
-        # print out data for every 50 sent
-        if (i % 50 == 0):
-            display_jnt_pack(resp)
-
-        current_rob_data = resp[low_bound:high_bound]
-
+# Send Final Command Pack   
+data = commandpack([resp[2], 1, m, rob_data])
+resp = client.send_command_pack(data)
 
 client.send_end_pack()
 print("End of Stream")

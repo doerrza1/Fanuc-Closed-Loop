@@ -103,7 +103,7 @@ for i, value in enumerate(signal):
         limit = client.send_jerk_pack(joint)
         display_limit_pack(limit)
 
-    current_data = resp[18:27]
+    current_jnt_data = resp[18:27]
     
 
 client.send_end_pack()

@@ -42,7 +42,4 @@ def display_jnt_pack(data):
     print("Joint 4 (deg): ", data[21])
     print("Joint 5 (deg): ", data[22])
     print("Joint 6 (deg): ", data[23])
-    print("Joint 7 (deg): ", data[24])
-    print("Joint 8 (deg): ", data[25])
-    print("Joint 9 (deg): ", data[26])
     print("----------------------------")
