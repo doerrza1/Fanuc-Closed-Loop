@@ -33,13 +33,22 @@ def normalize(lol):
     # Returns the length of the longest array
     max_len = len(max(lol, key=len))
     # Iterates through the lol for each signal
-    for sig in lol:
+    for i, sig in enumerate(lol):
         # Checks to see if the signal is shorter than the longest signal
         if (len(sig) < max_len):
             # Obtains the difference in length
             diff = max_len - len(sig)
-            # Pads the array with diff 0s at the end of the array
-            new_sig = np.pad(sig, (0, diff), 'constant')
+
+            # User input for padding before or after motion
+            confirm = input(f"Delay Motion for axis/joint {i + 1} (y/n): ").strip().upper()
+            print("----------------------------")
+            if (confirm == "Y"):
+                # Pads the array with diff 0s at the beginning of the array
+                new_sig = np.pad(sig, (diff,0), 'constant')
+
+            else:
+                # Pads the array with diff 0s at the end of the array
+                new_sig = np.pad(sig, (0, diff), 'constant')
             # Appends the new signal to the new lol
             new_lol.append(new_sig)
         
