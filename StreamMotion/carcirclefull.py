@@ -29,11 +29,70 @@ dec_base = np.linspace(sig, 1, sig)**2
 dec_base = dec_base / dec_base.sum() * (start2 - end2)
 decel = start2 - np.cumsum(dec_base)
 
+signal1 = np.append(accel, decel)
 
-signal = np.append(accel, decel)
+# Acceleration array definition
+start1 = 180
+end1 = 135
 
-reverse = np.flip(signal)
-signal = np.append(signal, reverse)
+# Creates a signal with increasing spacing (acceleration) over time 
+acc_base = np.linspace(1, sig, sig)**2
+acc_base = acc_base / acc_base.sum() * (start1 - end1)
+accel = start1 - np.cumsum(acc_base)
+
+# Deceleration array definition
+start2 = 135
+end2 = 90
+
+dec_base = np.linspace(sig, 1, sig)**2
+dec_base = dec_base / dec_base.sum() * (start2 - end2)
+decel = start2 - np.cumsum(dec_base)
+
+signal2 = np.append(accel, decel)
+
+signal = np.append(signal1, signal2)
+
+# Acceleration array definition
+start1 = 90
+end1 = 45
+
+# Creates a signal with increasing spacing (acceleration) over time 
+acc_base = np.linspace(1, sig, sig)**2
+acc_base = acc_base / acc_base.sum() * (start1 - end1)
+accel = start1 - np.cumsum(acc_base)
+
+# Deceleration array definition
+start2 = 45
+end2 = 0
+
+dec_base = np.linspace(sig, 1, sig)**2
+dec_base = dec_base / dec_base.sum() * (start2 - end2)
+decel = start2 - np.cumsum(dec_base)
+
+signal3 = np.append(accel, decel)
+
+signal = np.append(signal, signal3)
+
+# Acceleration array definition
+start1 = 0
+end1 = -45
+
+# Creates a signal with increasing spacing (acceleration) over time 
+acc_base = np.linspace(1, sig, sig)**2
+acc_base = acc_base / acc_base.sum() * (start1 - end1)
+accel = start1 - np.cumsum(acc_base)
+
+# Deceleration array definition
+start2 = -45
+end2 = -90
+
+dec_base = np.linspace(sig, 1, sig)**2
+dec_base = dec_base / dec_base.sum() * (start2 - end2)
+decel = start2 - np.cumsum(dec_base)
+
+signal4 = np.append(accel, decel)
+
+signal = np.append(signal, signal4)
 
 z_begin = 300
 z_origin = z_begin + r
@@ -70,7 +129,7 @@ while(cnt < loops):
     
     # Loop to send the signals to the robot
     for i in range(length):
-        
+            
         rob_data = resp[9:18]
         if (cnt % 2 == 0):
             rob_data[0] = signal[0][i]
