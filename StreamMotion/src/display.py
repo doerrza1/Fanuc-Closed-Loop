@@ -43,3 +43,12 @@ def display_jnt_pack(data):
     print("Joint 5 (deg): ", data[22])
     print("Joint 6 (deg): ", data[23])
     print("----------------------------")
+
+# Displays Current Cartesian Position and Velocity
+def display_pv(data, vel):
+    print("Sequence Number: ", data[2])
+    print("X (mm): ", data[9])
+    print("Y (mm): ", data[10])
+    print("Z (mm): ", data[11])
+    print("Velocity: ", vel)
+    print("----------------------------")

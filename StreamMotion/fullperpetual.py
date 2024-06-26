@@ -79,30 +79,51 @@ i = 0
 # Cartesian Movement
 if (m == 0):
     
-    while(i < cnt):
+    while(cnt < loops):
 
         rob_data = current_rob_data
-
-        if(i < max_len-1):
-            # Creates forward movement packs
-            rob_data[0] += signal[0][i]  #X
-            rob_data[1] += signal[1][i]  #Y
-            rob_data[2] += signal[2][i]  #Z
+        if (cnt % 2 == 0):
             
-            data = commandpack([resp[2], 0, m, rob_data])
-            i += 1
-        
-        elif(i == max_len-1):
-            rob_data[0] += signal[0][i]  #X
-            rob_data[1] += signal[1][i]  #Y
-            rob_data[2] += signal[2][i]  #Z
+            if(i < max_len-1):
+                # Creates forward movement packs
+                rob_data[0] += signal[0][i]  #X
+                rob_data[1] += signal[1][i]  #Y
+                rob_data[2] += signal[2][i]  #Z
+                
+                data = commandpack([resp[2], 0, m, rob_data])
+                i += 1
             
-            data = commandpack([resp[2], 0, m, rob_data])
+            elif(i == max_len-1):
+                rob_data[0] += signal[0][i]  #X
+                rob_data[1] += signal[1][i]  #Y
+                rob_data[2] += signal[2][i]  #Z
+                
+                data = commandpack([resp[2], 0, m, rob_data])
 
-            i = 0
-            cnt += 1 
-            signal = signal * (-1)
-            print(f"Loop Done {cnt}") 
+                i = 0
+                cnt += 1 
+                print(f"Loop Done {cnt}") 
+        else:
+            
+            if(i < max_len-1):
+                # Creates forward movement packs
+                rob_data[0] -= signal[0][i]  #X
+                rob_data[1] -= signal[1][i]  #Y
+                rob_data[2] -= signal[2][i]  #Z
+                
+                data = commandpack([resp[2], 0, m, rob_data])
+                i += 1
+            
+            elif(i == max_len-1):
+                rob_data[0] -= signal[0][i]  #X
+                rob_data[1] -= signal[1][i]  #Y
+                rob_data[2] -= signal[2][i]  #Z
+                
+                data = commandpack([resp[2], 0, m, rob_data])
+
+                i = 0
+                cnt += 1 
+                print(f"Loop Done {cnt}")
 
         # Sends command pack and receives new data
         resp = client.send_command_pack(data)
@@ -111,36 +132,63 @@ if (m == 0):
 # Joint Motion
 elif (m == 1):
     
-    while(i < cnt):
+    while(cnt < loops):
 
         rob_data = current_rob_data
+        if (cnt % 2 == 0):
+            
+            if(i < max_len-1):
+                # Creates forward movement packs
+                rob_data[0] += signal[0][i]  #J1
+                rob_data[1] += signal[1][i]  #J2
+                rob_data[2] += signal[2][i]  #J3
+                rob_data[3] += signal[3][i]  #J4
+                rob_data[4] += signal[4][i]  #J5
+                rob_data[5] += signal[5][i]  #J6
 
-        if(i < max_len-1):
-            # Creates forward movement packs
-            rob_data[0] += signal[0][i]  #J1
-            rob_data[1] += signal[1][i]  #J2
-            rob_data[2] += signal[2][i]  #J3
-            rob_data[3] += signal[3][i]  #J4
-            rob_data[4] += signal[4][i]  #J5
-            rob_data[5] += signal[5][i]  #J6
+                data = commandpack([resp[2], 0, m, rob_data])
+                i += 1
 
-            data = commandpack([resp[2], 0, m, rob_data])
-            i += 1
+            elif(i == max_len-1):
+                # Creates forward movement packs
+                rob_data[0] += signal[0][i]  #J1
+                rob_data[1] += signal[1][i]  #J2
+                rob_data[2] += signal[2][i]  #J3
+                rob_data[3] += signal[3][i]  #J4
+                rob_data[4] += signal[4][i]  #J5
+                rob_data[5] += signal[5][i]  #J6
 
-        elif(i == max_len-1):
-            # Creates forward movement packs
-            rob_data[0] += signal[0][i]  #J1
-            rob_data[1] += signal[1][i]  #J2
-            rob_data[2] += signal[2][i]  #J3
-            rob_data[3] += signal[3][i]  #J4
-            rob_data[4] += signal[4][i]  #J5
-            rob_data[5] += signal[5][i]  #J6
+                data = commandpack([resp[2], 0, m, rob_data])
+                i = 0
+                cnt += 1
+                print(f"Loop Done {cnt}") 
+        
+        else:
+            if(i < max_len-1):
+                # Creates forward movement packs
+                rob_data[0] -= signal[0][i]  #J1
+                rob_data[1] -= signal[1][i]  #J2
+                rob_data[2] -= signal[2][i]  #J3
+                rob_data[3] -= signal[3][i]  #J4
+                rob_data[4] -= signal[4][i]  #J5
+                rob_data[5] -= signal[5][i]  #J6
 
-            data = commandpack([resp[2], 0, m, rob_data])
-            i = 0
-            cnt += 1
-            signal = signal * (-1)
-            print(f"Loop Done {cnt}") 
+                data = commandpack([resp[2], 0, m, rob_data])
+                i += 1
+
+            elif(i == max_len-1):
+                # Creates forward movement packs
+                rob_data[0] -= signal[0][i]  #J1
+                rob_data[1] -= signal[1][i]  #J2
+                rob_data[2] -= signal[2][i]  #J3
+                rob_data[3] -= signal[3][i]  #J4
+                rob_data[4] -= signal[4][i]  #J5
+                rob_data[5] -= signal[5][i]  #J6
+
+                data = commandpack([resp[2], 0, m, rob_data])
+                i = 0
+                cnt += 1
+                print(f"Loop Done {cnt}")
 
             
         # Sends command pack and receives new data
