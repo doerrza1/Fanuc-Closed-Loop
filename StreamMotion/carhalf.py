@@ -34,32 +34,23 @@ signal1 = np.append(accel, decel)
 # Signal Definition for Subsequent Motion in x-axis
 # Acceleration
 start3 = 180
-end3 = 225
+end3 = 270
 
-acc_base = np.linspace(1, sig, sig)**2
+acc_base = np.linspace(1, d_sig, d_sig)**2
 acc_base = acc_base / acc_base.sum() * (start3 - end3)
 accel = start3 - np.cumsum(acc_base)
 
 
 # Deceleration
-start4 = 315
+start4 = 270
 end4 = 360
 
-dec_base = np.linspace(sig, 1, sig)**2
+dec_base = np.linspace(d_sig, 1, d_sig)**2
 dec_base = dec_base / dec_base.sum() * (start4 - end4)
 decel = start4 - np.cumsum(dec_base)
 print(decel)
 
-# Steady State Velocity Signal
-ss_1 = accel[-1]  # Obtain the last point from accel
-ss_2 = decel[0]   # Obtain the first point from decel
-print("ss1: ", ss_1)
-print("ss_2: ", ss_2)
-ss = np.linspace(start = ss_1, stop = ss_2, num = d_sig)
-print(ss)
-
-signal2 = np.append(accel, ss)
-signal2 = np.append(signal2, decel)
+signal2 = np.append(accel, decel)
 
 # Conversion from degrees array into cartesian points for signal1
 
