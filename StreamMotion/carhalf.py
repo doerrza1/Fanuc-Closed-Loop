@@ -3,6 +3,7 @@
 from src.client import *
 from src.utils import *
 from src.display import *
+from src.plot import *
 import numpy as np
 import math
 
@@ -36,7 +37,7 @@ signal1 = np.append(accel, decel)
 start3 = 180
 end3 = 225
 
-acc_base = np.linspace(1, sig, sig)**2
+acc_base = np.linspace(1, sig, sig)**1.5
 acc_base = acc_base / acc_base.sum() * (start3 - end3)
 accel = start3 - np.cumsum(acc_base)
 print("velo acc ", accel[-2] - accel[-1])
@@ -45,7 +46,7 @@ print("acc, ", accel[-1])
 start4 = 315
 end4 = 360
 
-dec_base = np.linspace(sig, 1, sig)**2
+dec_base = np.linspace(sig, 1, sig)**1.5
 dec_base = dec_base / dec_base.sum() * (start4 - end4)
 decel = start4 - np.cumsum(dec_base)
 # print(decel)
@@ -103,6 +104,8 @@ print("x_signal: ", len(x_signal))
 # print(x_signal)
 # print(x_signal)
 # Length used for first loop
+
+plot(z_signal, x_signal)
 length1 = len(signal1[0])
 
 # Length used for second loop
