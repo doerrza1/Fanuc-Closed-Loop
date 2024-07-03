@@ -17,7 +17,7 @@ start1 = 270
 end1 = 225
 
 # Creates a signal with increasing spacing (acceleration) over time 
-acc_base = np.linspace(1, sig, sig)**2
+acc_base = np.linspace(1, sig, int(sig*2/3))**2
 acc_base = acc_base / acc_base.sum() * (start1 - end1)
 accel = start1 - np.cumsum(acc_base)
 
@@ -25,7 +25,7 @@ accel = start1 - np.cumsum(acc_base)
 start2 = 225
 end2 = 180
 
-dec_base = np.linspace(sig, 1, sig)**2
+dec_base = np.linspace(sig, 1, int(sig*2/3))**2
 dec_base = dec_base / dec_base.sum() * (start2 - end2)
 decel = start2 - np.cumsum(dec_base)
 
@@ -39,8 +39,8 @@ end3 = 225
 acc_base = np.linspace(1, sig, sig)**2
 acc_base = acc_base / acc_base.sum() * (start3 - end3)
 accel = start3 - np.cumsum(acc_base)
-
-
+print("velo acc ", accel[-2] - accel[-1])
+print("acc, ", accel[-1])
 # Deceleration
 start4 = 315
 end4 = 360
@@ -48,15 +48,18 @@ end4 = 360
 dec_base = np.linspace(sig, 1, sig)**2
 dec_base = dec_base / dec_base.sum() * (start4 - end4)
 decel = start4 - np.cumsum(dec_base)
-print(decel)
+# print(decel)
+print("velo dec: ", decel[1] - decel[0])
+
 
 # Steady State Velocity Signal
-ss_1 = accel[-1]  # Obtain the last point from accel
-ss_2 = decel[0]   # Obtain the first point from decel
-print("ss1: ", ss_1)
+ss_1 = accel[-1]  # Obtain the last point from accel (225)
+ss_2 = decel[0]   # Obtain the first point from decel (315)
+print("ss_1: ", ss_1)
 print("ss_2: ", ss_2)
-ss = np.linspace(start = ss_1, stop = ss_2, num = d_sig)
-print(ss)
+ss = np.linspace(start = ss_1, stop = ss_2, num = int(d_sig/3))
+# print(ss)
+print("ss ",ss[1] - ss[0])
 
 signal2 = np.append(accel, ss)
 signal2 = np.append(signal2, decel)
@@ -97,13 +100,13 @@ print("signal1_x: ", len(signal1[0]))
 print("signal1_z: ", len(signal1[1]))
 print("z_signal: ", len(z_signal))
 print("x_signal: ", len(x_signal))
-print(x_signal)
+# print(x_signal)
 # print(x_signal)
 # Length used for first loop
 length1 = len(signal1[0])
 
 # Length used for second loop
-length2 = len(x_signal)
+length2 = len(z_signal)
 
 # Connection to robot
 client = UDPClient("192.168.0.3")
