@@ -3,6 +3,7 @@
 from src.client import *
 from src.utils import *
 from src.display import *
+from src.plot import *
 import numpy as np
 import math
 
@@ -17,7 +18,7 @@ start1 = 270
 end1 = 225
 
 # Creates a signal with increasing spacing (acceleration) over time 
-acc_base = np.linspace(1, sig, sig)**2
+acc_base = np.linspace(1, sig, sig)**2.5
 acc_base = acc_base / acc_base.sum() * (start1 - end1)
 accel = start1 - np.cumsum(acc_base)
 
@@ -25,7 +26,7 @@ accel = start1 - np.cumsum(acc_base)
 start2 = 225
 end2 = 180
 
-dec_base = np.linspace(sig, 1, sig)**2
+dec_base = np.linspace(sig, 1, sig)**2.5
 dec_base = dec_base / dec_base.sum() * (start2 - end2)
 decel = start2 - np.cumsum(dec_base)
 
@@ -36,7 +37,7 @@ signal1 = np.append(accel, decel)
 start3 = 180
 end3 = 270
 
-acc_base = np.linspace(1, d_sig, d_sig)**2
+acc_base = np.linspace(1, d_sig, d_sig)**1.1
 acc_base = acc_base / acc_base.sum() * (start3 - end3)
 accel = start3 - np.cumsum(acc_base)
 
@@ -45,7 +46,7 @@ accel = start3 - np.cumsum(acc_base)
 start4 = 270
 end4 = 360
 
-dec_base = np.linspace(d_sig, 1, d_sig)**2
+dec_base = np.linspace(d_sig, 1, d_sig)**1.1
 dec_base = dec_base / dec_base.sum() * (start4 - end4)
 decel = start4 - np.cumsum(dec_base)
 print(decel)
@@ -90,6 +91,7 @@ print("z_signal: ", len(z_signal))
 print("x_signal: ", len(x_signal))
 print(x_signal)
 # print(x_signal)
+plot(z_signal, x_signal)
 # Length used for first loop
 length1 = len(signal1[0])
 

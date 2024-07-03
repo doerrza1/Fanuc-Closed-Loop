@@ -3,6 +3,7 @@
 from src.client import *
 from src.utils import *
 from src.display import *
+from src.plot import *
 import math
 import numpy as np
 
@@ -50,6 +51,7 @@ for i, value in enumerate(signal):
     z_list.append(z)
 
 length = len(x_list)
+plot(z_list, x_list)
 signal = [x_list, z_list]
 
 # Connection to robot
