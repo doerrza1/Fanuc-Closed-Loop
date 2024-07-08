@@ -3,7 +3,7 @@ import numpy as np
 
 def create(lol):
     sig = []
-    for v_list in lol:
+    for i, v_list in enumerate(lol):
         
         if (v_list[1] == 0):
             accel = np.full(1, 0)
@@ -17,12 +17,17 @@ def create(lol):
         signal = np.append(accel, steady_state)
         signal = np.append(signal, deccel)
 
-        # Create reverse signal to move robot back to original position
-        if (input("Would you like to reverse motion (y/n)? ").strip().upper() == "Y"):
-            reverse = signal*(-1)
-            signal = np.append(signal, reverse)
-        
+        # Create reverse signal to move robot back to starting loop position
+        if (v_list[0] != 0):
+
+            if (input(f"Would you like to reverse motion for axis/joint {i + 1} (y/n)? ").strip().upper() == "Y"):
+
+                reverse = signal*(-1)
+                signal = np.append(signal, reverse)
+                print("----------------------------")
+                
         sig.append(signal)
+        
 
     v = normalize(sig)
     return v

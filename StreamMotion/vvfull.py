@@ -56,6 +56,8 @@ for i in range(loops):
     signal = create(ret)
     s_list.append(signal)
     print(f"Loop {i + 1} Done")
+    print("----------------------------")
+
 
 
 print(s_list)
