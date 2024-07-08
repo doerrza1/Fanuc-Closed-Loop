@@ -17,10 +17,10 @@ def create(lol):
         signal = np.append(accel, steady_state)
         signal = np.append(signal, deccel)
 
-        # Create reverse signal to move robot back to original pos
-        reverse = np.flip(signal)
-        reverse = reverse*(-1)
-        signal = np.append(signal, reverse)
+        # Create reverse signal to move robot back to original position
+        if (input("Would you like to reverse motion (y/n)? ").strip().upper() == "Y"):
+            reverse = signal*(-1)
+            signal = np.append(signal, reverse)
         
         sig.append(signal)
 
@@ -40,16 +40,19 @@ def normalize(lol):
             diff = max_len - len(sig)
 
             # User input for padding before or after motion
-            confirm = input(f"Delay Motion for axis/joint {i + 1} (y/n): ").strip().upper()
-            print("----------------------------")
-            if (confirm == "Y"):
-                # Pads the array with diff 0s at the beginning of the array
-                new_sig = np.pad(sig, (diff,0), 'constant')
+            # confirm = input(f"Delay Motion for axis/joint {i + 1} (y/n): ").strip().upper()
+            # print("----------------------------")
+            # if (confirm == "Y"):
+            #     # Pads the array with diff 0s at the beginning of the array
+            #     new_sig = np.pad(sig, (diff,0), 'constant')
 
-            else:
-                # Pads the array with diff 0s at the end of the array
-                new_sig = np.pad(sig, (0, diff), 'constant')
+            # else:
+            #     # Pads the array with diff 0s at the end of the array
+            #     new_sig = np.pad(sig, (0, diff), 'constant')
             # Appends the new signal to the new lol
+
+            # Removed Padding Functionality for ease of use with vvfull
+            new_sig = np.pad(sig, (diff,0), 'constant')
             new_lol.append(new_sig)
         
         else:
