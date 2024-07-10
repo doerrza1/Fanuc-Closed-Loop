@@ -4,6 +4,7 @@ from src.client import *
 from src.utils import *
 from src.display import *
 from src.plot import *
+from src.plot import *
 import numpy as np
 import math
 
@@ -40,8 +41,8 @@ end3 = 270
 acc_base = np.linspace(1, d_sig, d_sig)**1.1
 acc_base = acc_base / acc_base.sum() * (start3 - end3)
 accel = start3 - np.cumsum(acc_base)
-
-
+print("velo acc ", accel[-2] - accel[-1])
+print("acc, ", accel[-1])
 # Deceleration
 start4 = 270
 end4 = 360
@@ -49,7 +50,9 @@ end4 = 360
 dec_base = np.linspace(d_sig, 1, d_sig)**1.1
 dec_base = dec_base / dec_base.sum() * (start4 - end4)
 decel = start4 - np.cumsum(dec_base)
-print(decel)
+# print(decel)
+print("velo dec: ", decel[1] - decel[0])
+
 
 signal2 = np.append(accel, decel)
 
@@ -89,14 +92,16 @@ print("signal1_x: ", len(signal1[0]))
 print("signal1_z: ", len(signal1[1]))
 print("z_signal: ", len(z_signal))
 print("x_signal: ", len(x_signal))
-print(x_signal)
+# print(x_signal)
 # print(x_signal)
 plot(z_signal, x_signal)
 # Length used for first loop
+
+plot(z_signal, x_signal)
 length1 = len(signal1[0])
 
 # Length used for second loop
-length2 = len(x_signal)
+length2 = len(z_signal)
 
 # Connection to robot
 client = UDPClient("192.168.0.3")
