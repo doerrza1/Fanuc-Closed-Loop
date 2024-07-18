@@ -39,7 +39,7 @@ current_data = resp[9:18]
 # Loop Variables
 period = 0.008 # Time for loop
 j = 0 # Counter for initial command pack
-
+last_value = 0  # Placeholder for if an error occurs
 while(value != 0):
     # Obtain the starting time for the loop
     start_time = time.time()
@@ -50,7 +50,7 @@ while(value != 0):
         data = commandpack([1, 0, 0, car_data])
 
     # Obtain the encoder value
-    line = ser.readline().decode('utf-8').strip()
+    line = ser.readline().decode('utf-8', errors='ignore').strip()
     print("Encoder Value: ", line)
 
     # Convert the encoder string into a float
@@ -58,9 +58,10 @@ while(value != 0):
         decoder = float(line)
     # If given a bad value will convert it to zero
     except:  # ValueError
-        decoder = 0
+        decoder = last_value
         print("False Reading")
 
+    last_value = decoder
     # If the decoder is greater than value start robot motion
     if (decoder > value):
         print("Motion Start")
@@ -77,17 +78,18 @@ while(value != 0):
             current_data = resp[9:18]
             display_cmd_pack(resp)
         
-        # Creates final command pack
-        data = commandpack([resp[2], 1, 0, car_data])
+        # Creates/sends final command pack
+        data = commandpack([resp[2], 1, 0, current_data])
+        resp = client.send_command_pack(data)
 
         # Sends end pack
         client.send_end_pack()
-        print("End of Stream")
+        
         
         break
     
     # If the decoder is less than value send command pack of current position
-    else: 
+    elif (decoder < value): 
         
         data = commandpack([resp[2], 0, 0, car_data])
         # Sends command pack and receives new data
@@ -99,7 +101,7 @@ while(value != 0):
     print("-----------------------------")
 
 
-        
+print("End of Stream")    
 
 
 
