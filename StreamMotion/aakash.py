@@ -8,19 +8,18 @@ import numpy as np
 import serial
 import time
 
-# initialize serial connection
+# Initialize serial connection
 ser = serial.Serial('/dev/ttyACM0', 9600)
 
-# initialize connection to robot
+# Initialize connection to robot
 client = UDPClient("192.168.0.3")
 client.connect()
 
 
-
-period = 0.04
+period = 0.08
 last_value = 0
 
-for i in range (100000):
+for i in range (2000):
     start_time = time.time()
     rob_data = resp[9:18]
 
@@ -38,14 +37,14 @@ for i in range (100000):
         line = ser.readline().decode('utf-8', errors='ignore').strip()
         print("Encoder Value: ", line)
         try:
-            value = float(line) / 100 # move robot to 1/100 of the value read
+            value = float(line) / 1000 * 8  # Use value obtained as velocity for movement ()
             last_value = value
 
         except:
             value = last_value
 
         print("Value: ", value)
-        rob_data[2] = init_z + value # Add value to initial z position
+        rob_data[2] += value # Add value to initial z position
 
         data = commandpack([resp[2], 0, 0, rob_data])
 
