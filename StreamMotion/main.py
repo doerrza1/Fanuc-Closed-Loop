@@ -2,13 +2,14 @@ import numpy as np
 # import scipy
 import serial
 import time
+
 from src.client import *
 from src.utils import *
 from src.display import *
 
 arduino_port = '/dev/ttyACM0'
-baud_rate = 9600
-timeout = 1
+baud_rate = 115200
+timeout = 0.005
 ser = serial.Serial(arduino_port, baud_rate, timeout=timeout)
 
 def read_serial_data():
@@ -16,12 +17,20 @@ def read_serial_data():
         # Read a line from the serial port
         line = ser.readline().decode('utf-8').strip()
         if line:
-            # Split the line into position, velocity, and acceleration
-            position, velocity, acceleration = line.split(',')
-            return float(position), float(velocity), float(acceleration)
+            values = line.split(',')
+            if len(values) == 3:
+                # Split the line into position, velocity, and acceleration
+                position, velocity, acceleration = values
+                return float(position), float(velocity), float(acceleration)
+            else:
+                print("Not enough values received")
+
     except Exception as e:
         print(f"Error reading serial data: {e}")
-    return 0, 0, 0
+    return None, None, None
+    
+def pause():
+    programPause = input("Press the <ENTER> key to continue...")
 
 def physicalParameters():
     g = 9.81 # acceleration due to gravity (m/s^2)
@@ -63,7 +72,7 @@ def actuatorParameters(omkm, rk, Ik, COR):
     RX0 = RX*np.cos(OMX*thk - PSIX) - (rp + rk)*np.cos(thk)
     RY0 = RY*np.sin(OMY*thk - PSIY) - (rp + rk)*np.sin(thk)
     
-    return RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0
+    return RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0    
     
 def actVHC(th, omkm, Ik, rk, COR, RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0):
     # RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR)
@@ -89,6 +98,31 @@ def desiredPosVelAccn(th, dth, d2th, omkm, Ik, rk, COR, RX, OMX, PSIX, RX0, RY, 
     d2Y = diff2phiY*dth**2 + diffphiY*d2th
 
     return X, Y, dX, dY, d2X, d2Y
+    
+def zeroBeam():
+    print("Place the beam at theta = 0 and maintain stationary")
+    pause()
+    tf = time.time() + 6 # time to record encoder data at theta = 0
+    while time.time() < tf:
+        th, dth, d2th = read_serial_data() # establishes the zero position
+        last_th = th
+        last_dth = dth
+    return last_th, last_dth
+    
+def initialCondition():
+    print(f"Place the beam at initial condition > {thk}")
+    pause()
+    tf = time.time() + 6 # time to record encoder data
+    while time.time() < tf:
+        th, dth, d2th = read_serial_data() # establishes the initial conditions
+        last_th = th
+        last_dth = dth
+    try:
+        omkm = - np.sqrt(last_dth**2 + (2*m*g*rp/Jp)*(np.sin(last_th) - np.sin(thk))) # initial pre-impact velocity
+        return last_dth, omkm
+    except:
+        print("the initial condition is invalid -- go again")
+    return last_dth, None
 
 def initial_signal(rob_x, rob_z, init_x, init_z):
     
@@ -100,8 +134,8 @@ def initial_signal(rob_x, rob_z, init_x, init_z):
 
     # Signal Definition
             
-    acc_base = np.linspace(1, 250, 250)**2 # base array for acceleration with 125 signals (1 second)
-    dec_base = np.linspace(250, 1, 250)**2 # base array for deceleration with 125 signals (1 second)
+    acc_base = np.linspace(1, 125, 125)**2 # base array for acceleration with 125 signals (1 second)
+    dec_base = np.linspace(125, 1, 125)**2 # base array for deceleration with 125 signals (1 second)
 
     # x- accel/decel
     acc_base_x = acc_base / acc_base.sum() * (rob_x - x1)
@@ -125,69 +159,57 @@ def initial_signal(rob_x, rob_z, init_x, init_z):
 
     return signal
 
-
-
-# Initialize serial connection
-ser = serial.Serial(arduino_port, baud_rate, timeout=timeout)
-time.sleep(1)
-ser = serial.Serial('/dev/ttyACM0', 9600)  # Replace 'COMX' with your Arduino's serial port
-
-# Obtain Parameters 
-g, m, l, J, rp, Jp, M = physicalParameters()
-thk, tha, oms, rs, Is = freeParameters()
-calK = -(Jp/(rp + rs))
-
-# Initialize connection to robot
-client = UDPClient("192.168.0.3")
-client.connect()
-print("Connection Established to Robot")
-
-# Send initialization pack
-resp = client.send_init_pack() 
-rob_data = resp[9:18]
-print("Initialization Pack Sent")
-
-# initial conditions
-while True:
     
-    th, dth, d2th = read_serial_data()
-    print(th, dth, d2th)
-    time.sleep(2)
-    
-    omkm = - np.sqrt((2*m*g*rp/Jp)*(np.sin(th) - np.sin(thk))) # initial pre-impact velocity
-    omkm = -4
-    print(omkm)
-    
-    COR = 0.6 # initial estimate of COR
+if __name__ == "__main__":
+    g, m, l, J, rp, Jp, M = physicalParameters() # Obtain the physical parameters
+    thk, tha, oms, rs, Is = freeParameters() # Obtain the free parameters
+    calK = -(Jp/(rp + rs))
+    COR = 0.6
+
+    last_th, last_dth = zeroBeam() # Sets the zero position for the beam
+    print(last_th, last_dth)
+    while last_th != 0:  # If theta is not 0 redo zeroing until it is
+        print("redo zeroing")
+        last_th, last_dth = zeroBeam()
+    last_dth, omkm = initialCondition() # Set the initial condition for the beam
+    if omkm is None:
+        last_dth, omkm = initialCondition() # If omkm is undefined try again
+
+    # first set of VHC parameters for the initial conditions
     Ik = Is + calK*(omkm - oms) # desired impulse value
     rk = rs # desired point of application
-    RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR) # we don't want to keep recomputing these in RT
-    print(RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
+    RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR) # we don't want to keep recomputing these
     
-    last_dth = dth # the last saved value of dth
-    
-    t0 = time.time()
-    t  = t0
+    j = 0 # Increment variable for initial movement
+    period = 0.79 # Period of time for each loop
+
     impact_ctr = 0
-    
-    j = 0 # Set increment to control which command group to use
+
+    # Stream Initialization
+    client = UDPClient("192.168.0.3")
+    client.connect()
+    print("Connection Established to Robot")
+
+    # Send initialization pack
+    resp = client.send_init_pack() 
+    rob_data = resp[9:18]
+    print("Initialization Pack Sent")
 
     while impact_ctr < 10:
-        
-        start_time = time.time()  # start time
+        start_time = time.time()
 
         th, dth, d2th = read_serial_data()
-        
-        serial_time = time.time() - start_time
-        print("Serial Time: ", serial_time)
+        print("theta: ", th)
+        print("dtheta: ", dth)
+        print("d2theta: ", d2th)
 
+        serial_time = time.time()
+        print("Serial Time: ", serial_time)
         X, Y, dX, dY, d2X, d2Y = desiredPosVelAccn(th, dth, d2th, omkm, Ik, rk, COR, RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
 
-        calc_time = time.time() - start_time
+        calc_time = time.time()
         print("Calculation Time: ", calc_time)
 
-        print(X, Y, dX, dY, d2X, d2Y)
-        
         # Stream Motion
         if (j == 0): # Go to initial position
 
@@ -203,6 +225,7 @@ while True:
             resp = client.send_command_pack(data)
             
             for i in range(250): # Loop to send signals
+                st = time.time()
 
                 rob_data = resp[9:18]
 
@@ -211,6 +234,10 @@ while True:
 
                 data = commandpack([resp[2], 0, 0, rob_data])
                 resp = client.send_command_pack(data)
+                
+                el = time.time() - st
+                sleep_time = period - el
+                time.sleep(sleep_time)
 
             j += 1 # Increment iterator to proceed to next statement group
 
@@ -224,25 +251,22 @@ while True:
             resp = client.send_command_pack(data)
             #display_cmd_pack(resp) # Displays the command pack
 
-        t_elapsed = time.time() - start_time # Time elapsed per loop
-        print("Time Elapsed: ", t_elapsed)
-        print("________________________________")
 
-    data = commandpack([resp[2], 1, 0, rob_data]) # Final command pack
-    resp = client.send_command_pack(data) # Send final command pack
-    print("Final Command Pack Sent")
+        if dth > 0 and dth * last_dth < 0:
+            omkm = - dth
+            Ik = Is + calK*(omkm - oms) # desired impulse value
+            rk = rs # desired point of application
+            print("an impact has occurred")
+            impact_ctr = impact_ctr + 1
+            print(impact_ctr)
+            #COR = COR + 
+            RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR) # new VHC parameters
+            print(RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
+        last_dth = dth
 
-    client.send_end_pack() # Sends end pack to terminate command normally
-    print("End of Stream")
+        loop_time = time.time() - start_time
+        print("Loop Time: ", loop_time)
 
-
-    if dth > 0 and dth * last_dth < 0:
-        omkm = - dth
-        Ik = Is + calK*(omkm - oms) # desired impulse value
-        rk = rs # desired point of application
-        print("an impact has occurred")
-        impact_ctr = impact_ctr + 1
-        #COR = COR + 
-        RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR) # new VHC parameters
-        print(RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
-    last_dth = dth
+        sleep_time = period - loop_time
+        time.sleep(sleep_time) # Pauses loop to ensure not too many packs are sent
+        print('____________________________')
