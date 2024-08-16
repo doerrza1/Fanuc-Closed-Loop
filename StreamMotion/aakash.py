@@ -69,9 +69,16 @@ for i in range (2000):
     rob_data = resp[9:18]
 
     pos, vel, acc = read_serial_data()
+    try:
+        print("Pos: ", pos)
+        rob_data[2] += math.sin(pos) # Increment value from initial z position
+        last_pos = pos
+        last_vel = vel
+        last_acc = acc
 
-    print("Pos: ", pos)
-    rob_data[2] += math.sin(pos) # Increment value from initial z position
+    except:
+        rob_data[2] += math.sin(last_pos + last_vel + last_acc)
+        
 
     data = commandpack([resp[2], 0, 0, rob_data])
 

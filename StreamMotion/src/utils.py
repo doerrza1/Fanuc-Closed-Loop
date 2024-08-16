@@ -16,7 +16,7 @@ def endpack():
 
 def explainRobData(data):
     # Simplified pack/unpack to reduce time/function calls
-    pack = list(struct.unpack('>IIIIBBHHHIf'*9 + 'f'*18, data))
+    pack = list(struct.unpack('>IIIBBHHHI' + 'f'*27, data))
     return pack
 
     # Legacy function
@@ -139,7 +139,7 @@ def commandpack(data):
     data_style = data[2]
     jnt_data = data[3]
     
-    pack = struct.pack('>IIIIBBHHHBHBHHH3x' + 'f'*9,
+    pack = struct.pack('>IIIBBHHBBHHHH' + 'f'*9,
                        1, 1, sequence_no, last_data, 0, 0, 0, data_style, 0, 0, 0, 0, 0,
                        *jnt_data)
     return pack

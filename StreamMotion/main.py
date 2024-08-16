@@ -115,6 +115,7 @@ def initialCondition():
     tf = time.time() + 6 # time to record encoder data
     while time.time() < tf:
         th, dth, d2th = read_serial_data() # establishes the initial conditions
+        print("Theta: ", th)
         last_th = th
         last_dth = dth
     try:
@@ -158,6 +159,21 @@ def initial_signal(rob_x, rob_z, init_x, init_z):
     signal = [sig_x, sig_z]
 
     return signal
+
+# If the value obtained is invalid calculate the next value to prevent a jerk error
+def invalid_sig(X, Y, dX, dY, d2X, d2Y):
+    X = X + (dX + d2X)* 8 / 1000   # New pos is sum of last pos plus the velocity and acceleration in m/8ms
+    Y = Y + (dY + d2Y)* 8 / 1000
+
+    return X, Y
+
+def isnum(num):
+    try:
+        float(num)
+        return True
+    
+    except:
+        return False
 
     
 if __name__ == "__main__":
@@ -228,7 +244,6 @@ if __name__ == "__main__":
                 st = time.time()
 
                 rob_data = resp[9:18]
-
                 rob_data[0] = signal[0][i]
                 rob_data[2] = signal[1][i]
 
@@ -244,8 +259,21 @@ if __name__ == "__main__":
         else: # Subsequent movemements determined by function
 
             rob_data = resp[9:18] # Update the robot position data to response packet values
-            rob_data[0] = X *1000 # Set the x-position to desired position in mm
-            rob_data[2] = Y *1000 # Set the y-position to desired position in mm
+            
+            if (isnum(X) and isnum(Y)): # Check for numeric values
+
+                rob_data[0] = X *1000 # Set the x-position to desired position in mm
+                rob_data[2] = Y *1000 # Set the y-position to desired position in mm
+                
+                last_X = X 
+                last_Y = Y
+           
+            else: # if not numeric send to calculate proper position to not create jerk error
+                
+                X, Y = invalid_sig(last_X, last_Y, dX, dY, d2X, d2Y)
+                rob_data[0] = X * 1000
+                rob_data[2] = Y * 1000
+
 
             data = commandpack([resp[2], 0, 0, rob_data]) # Create command pack [signal count, lastpack?, coordinate sys, position]
             resp = client.send_command_pack(data)
