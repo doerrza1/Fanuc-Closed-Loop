@@ -1,3 +1,5 @@
+# Just the signal for circlular joint motion
+
 import socket
 import time
 from src.utils import *

@@ -1,5 +1,7 @@
 #Joint Stram Motion Test for Fanuc LR Mate 200iD
 
+# Joint 3 motion for testing of making a circular motion
+
 import socket
 import time
 from src.utils import *

@@ -1,5 +1,7 @@
 # Cartesian Circle Motion for Fanuc LR Mate 200 iD
 
+# Attempt at creating circle using a bell curve for acceleration
+
 import socket
 import time
 from robot.StreamMotion.src.utils import *

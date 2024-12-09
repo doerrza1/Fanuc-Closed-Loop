@@ -1,7 +1,7 @@
 from src.utils import *
 from socket import *
 import numpy as np
-from src.limit import *
+
 
 class UDPClient():
   def __init__(self, ip, port=60015):
@@ -39,24 +39,19 @@ class UDPClient():
     data = velocitypack(axis)
     self.sock.sendto(data, (self.UDP_IP, self.UDP_PORT))
     
-    resp = self.sock.recv(132)
+    resp = self.sock.recv(184)
     return explainLimitResponse(resp)
   
   def send_acc_pack(self, axis):
     data = accelerationpack(axis)
     self.sock.sendto(data, (self.UDP_IP, self.UDP_PORT))
 
-    resp = self.sock.recv(132)
+    resp = self.sock.recv(184)
     return explainLimitResponse(resp)
   
   def send_jerk_pack(self, axis):
     data = jerkpack(axis)
     self.sock.sendto(data, (self.UDP_IP, self.UDP_PORT))
 
-    resp = self.sock.recv(132)
+    resp = self.sock.recv(184)
     return explainLimitResponse(resp)
-  
-
-
-
-    

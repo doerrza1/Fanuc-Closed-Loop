@@ -1,5 +1,7 @@
 # Fanuc Stream Motion test for alternating half circle motion
 
+# Cartesian half circle from home position
+
 from src.client import *
 from src.utils import *
 from src.display import *

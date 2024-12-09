@@ -1,5 +1,6 @@
 #Joint Stram Motion Test for Fanuc LR Mate 200iD
 
+# Joint motion circle
 import socket
 import time
 from src.client import *

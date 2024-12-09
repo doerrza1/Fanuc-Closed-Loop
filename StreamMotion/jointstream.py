@@ -1,4 +1,6 @@
-#Joint Stram Motion Test for Fanuc LR Mate 200iD
+#Joint Stream Motion Test for Fanuc LR Mate 200iD
+
+# Initial test for joint based motion
 
 import socket
 import time

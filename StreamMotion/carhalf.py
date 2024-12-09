@@ -1,5 +1,7 @@
 # Fanuc Stream Motion Test for Cartesian Half Circle without stop
 
+# do not belive this one works
+
 from src.client import *
 from src.utils import *
 from src.display import *

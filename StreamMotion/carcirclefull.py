@@ -1,4 +1,6 @@
-# Fanuc Stream Motion test for alternating half circle motion
+
+
+# Cartesian circle with full range
 
 from src.client import *
 from src.utils import *

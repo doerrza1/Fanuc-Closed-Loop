@@ -1,5 +1,7 @@
 # Cartestian Stream Motion test for Fanuc LR Mate 200iD
 
+# Basic cartesian stream from initial testing with stream motion
+
 import socket
 import time
 from src.client import *

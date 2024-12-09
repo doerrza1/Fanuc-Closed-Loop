@@ -1,5 +1,7 @@
 # Cartesian Flip Motion for Fanuc LR Mate 200 iD
 
+# Creates initial motion and reverses
+
 from src.client import *
 from src.utils import *
 from src.display import *

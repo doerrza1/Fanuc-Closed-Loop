@@ -1,5 +1,7 @@
 # Fanuc Stream Motion Test with Decoder
 
+# Initial live function for final deliverable
+
 from src.client import *
 from src.utils import *
 from src.plot import *

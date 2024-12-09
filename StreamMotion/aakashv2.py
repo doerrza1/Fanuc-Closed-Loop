@@ -1,5 +1,7 @@
 # Fanuc Stream Motion Test for communication with decoder
 
+# 2nd version of final deliverable for live communication
+
 from src.client import *
 from src.utils import *
 from src.display import *

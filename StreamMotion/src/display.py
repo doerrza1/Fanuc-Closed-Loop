@@ -29,7 +29,7 @@ def display_limit_pack(data):
     print("Type of Limit: ", limit)
     print("Vmax (mm/s): ", data[4])
     print("Check Time (sec): ", data[5])
-    print("Allowable limit: ", data[6])
+    print("Allowable limit: ", data[6:])
     print("----------------------------")
 
 def display_jnt_pack(data):

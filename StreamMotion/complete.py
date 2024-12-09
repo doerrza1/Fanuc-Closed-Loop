@@ -1,5 +1,6 @@
 # Fanuc Stream Motion Test for complete control over both cartesian and joint movement
 
+# Allows for control of cartesian or joint motion based on prompts
 from src.client import *
 from src.display import *
 from src.utils import *

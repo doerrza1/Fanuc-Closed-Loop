@@ -1,4 +1,5 @@
 # Full Motion Control (All joints/All axes) for Fanuc Stream Motion
+# This one can do some cool stuff
 
 from src.client import *
 from src.display import *

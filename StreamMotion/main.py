@@ -82,6 +82,7 @@ def actVHC(th, omkm, Ik, rk, COR, RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0):
     # d phi / d theta
     diffphiX = -RX * OMX * np.sin(OMX * th - PSIX)
     diffphiY = RY * OMY * np.cos(OMY * th - PSIY)
+
     # d2 phi / d theta2
     diff2phiX = -RX * OMX**2 * np.cos(OMX * th - PSIX)
     diff2phiY = -RY * OMY**2 * np.sin(OMY * th - PSIY)
@@ -135,8 +136,8 @@ def initial_signal(rob_x, rob_z, init_x, init_z):
 
     # Signal Definition
             
-    acc_base = np.linspace(1, 125, 125)**2 # base array for acceleration with 125 signals (1 second)
-    dec_base = np.linspace(125, 1, 125)**2 # base array for deceleration with 125 signals (1 second)
+    acc_base = np.linspace(1, 250, 250)**2 # base array for acceleration with 125 signals (2 seconds)
+    dec_base = np.linspace(250, 1, 250)**2 # base array for deceleration with 125 signals (2 seconds)
 
     # x- accel/decel
     acc_base_x = acc_base / acc_base.sum() * (rob_x - x1)
@@ -150,7 +151,7 @@ def initial_signal(rob_x, rob_z, init_x, init_z):
     acc_z = rob_z - np.cumsum(acc_base_z)
 
     dec_base_z = dec_base / dec_base.sum() * (z1 - init_z)
-    dec_z = rob_z - np.cumsum(dec_base_z)
+    dec_z = z1 - np.cumsum(dec_base_z)
 
     # signals
     sig_x = np.append(acc_x, dec_x)
@@ -174,7 +175,24 @@ def isnum(num):
     
     except:
         return False
+    
+def end_effector(start):
+    end = 90
+    diff = (start - end) / 2
+    half = end + diff
 
+    acc_base = np.linspace(1, 125, 125)**2 # base array for acceleration with 125 signals (1 second)
+    dec_base = np.linspace(125, 1, 125)**2 # base array for deceleration with 125 signals (1 second)
+
+    #accel/decel
+    acc_base_th = acc_base / acc_base.sum() * (start - half)
+    acc_th = start - np.cumsum(acc_base_th)
+    
+    dec_base_th = dec_base / dec_base.sum() * (half - end)
+    dec_base_th = half - np.cumsum(dec_base_th)
+
+    end_sig = np.append(acc_th, dec_base_th)
+    return end_sig
     
 if __name__ == "__main__":
     g, m, l, J, rp, Jp, M = physicalParameters() # Obtain the physical parameters
@@ -216,18 +234,20 @@ if __name__ == "__main__":
 
         th, dth, d2th = read_serial_data()
         print("theta: ", th)
-        print("dtheta: ", dth)
-        print("d2theta: ", d2th)
+        # print("dtheta: ", dth)
+        # print("d2theta: ", d2th)
 
         serial_time = time.time()
-        print("Serial Time: ", serial_time)
+        # print("Serial Time: ", serial_time)
         X, Y, dX, dY, d2X, d2Y = desiredPosVelAccn(th, dth, d2th, omkm, Ik, rk, COR, RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
 
         calc_time = time.time()
-        print("Calculation Time: ", calc_time)
+        # print("Calculation Time: ", calc_time)
 
         # Stream Motion
         if (j == 0): # Go to initial position
+            print("Initial movement Begin")
+            print()
 
             rob_x = rob_data[0] # Robot initial x position
             rob_z = rob_data[2] # Robot initial z position
@@ -237,11 +257,11 @@ if __name__ == "__main__":
 
             signal = initial_signal(rob_x, rob_z, init_x, init_z) # Call initial signal
 
-            data = commandpack(1, 0, 0, rob_data) # Initial command pack
+            data = commandpack([1, 0, 0, rob_data]) # Initial command pack
             resp = client.send_command_pack(data)
             
-            for i in range(250): # Loop to send signals
-                st = time.time()
+            for i in range(500): # Loop to send signals
+                # st = time.time()
 
                 rob_data = resp[9:18]
                 rob_data[0] = signal[0][i]
@@ -250,20 +270,39 @@ if __name__ == "__main__":
                 data = commandpack([resp[2], 0, 0, rob_data])
                 resp = client.send_command_pack(data)
                 
-                el = time.time() - st
-                sleep_time = period - el
-                time.sleep(sleep_time)
+                # el = time.time() - st
+                # sleep_time = period - el
+                # time.sleep(sleep_time)
+            print("Initial Movement Complete")
+            print()
 
             j += 1 # Increment iterator to proceed to next statement group
 
-        else: # Subsequent movemements determined by function
+        elif (j == 1): # pause robot to move tool end to position
+            print("EOAT Movement Begin")
+            print()
+            effect_sig = end_effector(resp[6]) # Get signal to move end effector out
 
+            for i in effect_sig:
+                rob_data[7] = i
+
+                data = commandpack([resp[2], 0, 0, rob_data])
+                resp = client.send_command_pack(data)
+                rob_data = resp[9:18]
+
+            print("EOAT Movement Complete")
+            print()
+            j += 1 # Increment to enter final if statement
+
+        else: # Subsequent movemements determined by function
+            print("Encoder Begin")
             rob_data = resp[9:18] # Update the robot position data to response packet values
             
             if (isnum(X) and isnum(Y)): # Check for numeric values
 
-                rob_data[0] = X *1000 # Set the x-position to desired position in mm
-                rob_data[2] = Y *1000 # Set the y-position to desired position in mm
+                rob_data[0] = X * 1000 # Set the x-position to desired position in mm
+                rob_data[2] = Y * 1000 # Set the y-position to desired position in mm
+                rob_data[6] = 90 # Ensure that the end effector stays in position
                 
                 last_X = X 
                 last_Y = Y
@@ -273,6 +312,7 @@ if __name__ == "__main__":
                 X, Y = invalid_sig(last_X, last_Y, dX, dY, d2X, d2Y)
                 rob_data[0] = X * 1000
                 rob_data[2] = Y * 1000
+                rob_data[6] = 90
 
 
             data = commandpack([resp[2], 0, 0, rob_data]) # Create command pack [signal count, lastpack?, coordinate sys, position]
@@ -284,17 +324,17 @@ if __name__ == "__main__":
             omkm = - dth
             Ik = Is + calK*(omkm - oms) # desired impulse value
             rk = rs # desired point of application
-            print("an impact has occurred")
+            # print("an impact has occurred")
             impact_ctr = impact_ctr + 1
-            print(impact_ctr)
+            # print(impact_ctr)
             #COR = COR + 
             RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0 = actuatorParameters(omkm, rk, Ik, COR) # new VHC parameters
-            print(RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
+            # print(RX, OMX, PSIX, RX0, RY, OMY, PSIY, RY0)
         last_dth = dth
 
-        loop_time = time.time() - start_time
-        print("Loop Time: ", loop_time)
+        # loop_time = time.time() - start_time
+        # print("Loop Time: ", loop_time)
 
-        sleep_time = period - loop_time
-        time.sleep(sleep_time) # Pauses loop to ensure not too many packs are sent
-        print('____________________________')
+        # sleep_time = period - loop_time
+        # time.sleep(sleep_time) # Pauses loop to ensure not too many packs are sent
+        # print('____________________________')

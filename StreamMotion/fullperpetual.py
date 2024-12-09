@@ -1,4 +1,5 @@
 # Full Motion Control (All joints/All axes) for Fanuc Stream Motion
+# Same as fullmotion.py with loop integration to continuously run
 
 from src.client import *
 from src.display import *
