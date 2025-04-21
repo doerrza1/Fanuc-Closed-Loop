@@ -168,7 +168,7 @@ with open(f'output_{i}_joints_xy.csv', mode='w', newline='') as file:
                deg_array[time][4], vel_j[time][4], acc_j[time][4], jerk_j[time][4],
                deg_array[time][5], vel_j[time][5], acc_j[time][5], jerk_j[time][5]]
         
-        writer.write(row)
+        writer.writerow(row)
 
 # Stream Motion
 # Establish UDP connection
